@@ -30,3 +30,13 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
+# Migrations create
+
+- npm run typeorm:migration:create -- -n nameMigrations
+
+#Migrations run
+- npm run typeorm:migration:run
+
+# Migrations generate
+
+- npm run typeorm:migration:generate -- -n updateDatabase
