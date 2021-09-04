@@ -6,10 +6,10 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Account } from './account.entity';
-import { Member } from './member.entity';
-import { EnglishLevel } from './english-level.entity';
-import { PersonType } from './person-type.entity';
+import { Account } from '../../database/entities/account.entity';
+import { Member } from '../../database/entities/member.entity';
+import { EnglishLevel } from '../../database/entities/english-level.entity';
+import { PersonType } from '../../person-type/entities/person-type.entity';
 
 @Index('person_pk', ['id'], { unique: true })
 @Entity('person', { schema: 'public' })
@@ -49,6 +49,7 @@ export class Person {
   englishLevel: EnglishLevel;
 
   @ManyToOne(() => PersonType, (personType) => personType.people, {
+    eager: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn([{ name: 'person_type_id', referencedColumnName: 'id' }])

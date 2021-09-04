@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { getConnection } from 'typeorm';
-import { Person } from './database/entities/person.entity';
+import { Repository } from 'typeorm';
 import { EnglishLevel } from './database/entities/english-level.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class AppService {
+  constructor(
+    @InjectRepository(EnglishLevel)
+    private readonly englishLevelRepository: Repository<EnglishLevel>,
+  ) {}
   async getHello(): Promise<any> {
-    return await getConnection().getRepository(EnglishLevel).find();
+    return await this.englishLevelRepository.find();
   }
 }

@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Person } from './person.entity';
+import { Person } from '../../person/entities/person.entity';
 import { Team } from './team.entity';
 
 @Index('account_pk', ['id'], { unique: true })

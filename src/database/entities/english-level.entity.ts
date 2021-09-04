@@ -1,5 +1,5 @@
 import { Column, Entity, Index, OneToMany } from 'typeorm';
-import { Person } from './person.entity';
+import { Person } from '../../person/entities/person.entity';
 
 @Index('english_level_pk', ['id'], { unique: true })
 @Entity('english_level', { schema: 'public' })

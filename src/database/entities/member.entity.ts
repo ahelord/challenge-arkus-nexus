@@ -1,5 +1,5 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
-import { Person } from './person.entity';
+import { Person } from '../../person/entities/person.entity';
 import { Team } from './team.entity';
 
 @Index('member_pk', ['id'], { unique: true })
