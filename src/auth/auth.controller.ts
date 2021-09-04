@@ -7,7 +7,7 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { CreateSignUpDto, LoginDto } from "./dto";
+import { CreateSignUpDto, LoginDto } from './dto';
 import { ResponseDto } from '../shared/response.dto';
 
 @Controller('auth')

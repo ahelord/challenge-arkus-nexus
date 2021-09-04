@@ -12,5 +12,4 @@ export class GetPersonDto {
 
   @IsNotEmpty()
   personTypeValue: string;
-
 }

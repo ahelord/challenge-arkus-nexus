@@ -56,10 +56,10 @@ export class AuthService {
     const person: Person = await this.personRepository.findOne({
       where: { email },
     });
-    console.log(person)
+    console.log(person);
     if (!person) throw new NotFoundException('email not exists');
     const isSamePassword = await compare(password, person.passwordEncrypted);
-    if (!isSamePassword){
+    if (!isSamePassword) {
       throw new UnauthorizedException('invalidad credentials');
     }
     const payload: JwtPayload = {

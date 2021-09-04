@@ -12,14 +12,14 @@ import jwtConfig from '../config/jwt.config';
   imports: [
     TypeOrmModule.forFeature([PersonType, Person]),
     PassportModule.register({
-      defaultStrategy: 'jwt',
+      defaultStrategy: jwtConfig.defaultStrategy,
     }),
     JwtModule.registerAsync({
       useFactory: () => {
         return {
-          secret: jwtConfig.jwtSecret,
+          secret: jwtConfig.secret,
           signOptions: {
-            expiresIn: 3600,
+            expiresIn: jwtConfig.expiresIn,
           },
         };
       },
