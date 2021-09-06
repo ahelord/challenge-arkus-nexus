@@ -1,9 +1,18 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Person } from './entities/person.entity';
+import { Repository } from 'typeorm';
+import { GetPersonDto } from './dto/get-person.dto';
+import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
 
 @Injectable()
 export class PersonService {
+  constructor(
+    @InjectRepository(Person)
+    private readonly personRepository: Repository<Person>,
+  ) {}
   create(createPersonDto: CreatePersonDto) {
     return 'This action adds a new person';
   }
@@ -12,12 +21,39 @@ export class PersonService {
     return `This action returns all person`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} person`;
+  async findOne(id: string): Promise<GetPersonDto> {
+    const person: Person = await this.personRepository.findOne({
+      select: ['id', 'email', 'fullName', 'personType'],
+      where: { id },
+    });
+    if (!person) throw new NotFoundException('person not exists');
+
+    return new GetPersonDto(
+      person.id,
+      person.email,
+      person.fullName,
+      new GetPersonTypeDto(person.personType.id, person.personType.value),
+    );
   }
 
-  update(id: number, updatePersonDto: UpdatePersonDto) {
-    return `This action updates a #${id} person`;
+  async update(
+    id: string,
+    updatePersonDto: UpdatePersonDto,
+  ): Promise<GetPersonDto> {
+    await this.personRepository.update({ id }, { ...updatePersonDto });
+
+    const person: Person = await this.personRepository.findOne({
+      select: ['id', 'email', 'fullName', 'personType'],
+      where: { id },
+    });
+    if (!person) throw new NotFoundException('person not exists');
+
+    return new GetPersonDto(
+      person.id,
+      person.email,
+      person.fullName,
+      new GetPersonTypeDto(person.personType.id, person.personType.value),
+    );
   }
 
   remove(id: number) {

@@ -14,7 +14,7 @@ import { ResponseDto } from '../shared/response.dto';
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post()
+  @Post('signup')
   @UsePipes(ValidationPipe)
   async signup(@Body() createSignupDto: CreateSignUpDto): Promise<ResponseDto> {
     let responseDto;

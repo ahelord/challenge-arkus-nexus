@@ -6,11 +6,16 @@ import {
   Patch,
   Param,
   Delete,
+  HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { PersonService } from './person.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
+import { ResponseDto } from '../shared/response.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard())
 @Controller('person')
 export class PersonController {
   constructor(private readonly personService: PersonService) {}
@@ -26,13 +31,30 @@ export class PersonController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.personService.findOne(+id);
+  async findOne(@Param('id') id: string): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.personService.findOne(id);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePersonDto: UpdatePersonDto) {
-    return this.personService.update(+id, updatePersonDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updatePersonDto: UpdatePersonDto,
+  ): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.personService.update(id, updatePersonDto);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Delete(':id')
