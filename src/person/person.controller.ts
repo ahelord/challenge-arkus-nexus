@@ -12,8 +12,10 @@ import {
 import { PersonService } from './person.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
-import { ResponseDto } from '../shared/response.dto';
+import { ResponseDto } from '../shared/dto/response.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { PersonTypes } from '../person-type/decorators/person-type.decorator';
+import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 
 @UseGuards(AuthGuard())
 @Controller('person')
@@ -31,6 +33,8 @@ export class PersonController {
   }
 
   @Get(':id')
+  @PersonTypes('ADMIN', 'USER', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
   async findOne(@Param('id') id: string): Promise<ResponseDto> {
     let responseDto;
     try {
@@ -58,7 +62,16 @@ export class PersonController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.personService.remove(+id);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async remove(@Param('id') id: string): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.personService.remove(id);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 }

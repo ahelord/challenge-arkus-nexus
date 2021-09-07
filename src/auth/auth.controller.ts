@@ -5,10 +5,14 @@ import {
   UsePipes,
   ValidationPipe,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { CreateSignUpDto, LoginDto } from './dto';
-import { ResponseDto } from '../shared/response.dto';
+import { ResponseDto } from '../shared/dto/response.dto';
+import { PersonTypes } from '../person-type/decorators/person-type.decorator';
+import { PersonTypeGuard } from '../shared/guards/person-type.guard';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -16,6 +20,8 @@ export class AuthController {
 
   @Post('signup')
   @UsePipes(ValidationPipe)
+  @PersonTypes('SUPER_ADMIN')
+  @UseGuards(AuthGuard(), PersonTypeGuard)
   async signup(@Body() createSignupDto: CreateSignUpDto): Promise<ResponseDto> {
     let responseDto;
     try {

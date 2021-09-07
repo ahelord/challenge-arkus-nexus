@@ -11,7 +11,8 @@ import { PersonType } from '../person-type/entities/person-type.entity';
 import { Repository } from 'typeorm';
 import { compare, genSalt, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
-import { JwtPayload } from './jwt-payload.interface';
+import { GetPersonDto } from '../person/dto/get-person.dto';
+import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
 
 @Injectable()
 export class AuthService {
@@ -62,11 +63,14 @@ export class AuthService {
     if (!isSamePassword) {
       throw new UnauthorizedException('invalidad credentials');
     }
-    const payload: JwtPayload = {
+    const payload: GetPersonDto = {
       id: person.id,
+      fullName: person.fullName,
       email: person.email,
-      personTypeId: person.personType.id,
-      personTypeValue: person.personType.value,
+      personType: new GetPersonTypeDto(
+        person.personType.id,
+        person.personType.value,
+      ),
     };
     const token = await this.jwtService.sign(payload);
     return { token };

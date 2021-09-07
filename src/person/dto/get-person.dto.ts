@@ -12,12 +12,6 @@ export class GetPersonDto {
   email: string;
 
   @IsNotEmpty()
-  personTypeId: string;
-
-  @IsNotEmpty()
-  personTypeValue: string;
-
-  @IsNotEmpty()
   personType: GetPersonTypeDto;
 
   constructor(

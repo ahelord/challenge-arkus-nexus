@@ -56,7 +56,10 @@ export class PersonService {
     );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} person`;
+  async remove(id: string): Promise<{ isDeleted: boolean }> {
+    const deleteResult = await this.personRepository.delete({ id });
+    return deleteResult.affected > 0
+      ? { isDeleted: true }
+      : { isDeleted: false };
   }
 }
