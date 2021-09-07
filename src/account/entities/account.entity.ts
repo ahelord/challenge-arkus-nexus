@@ -29,7 +29,7 @@ export class Account {
     eager: true,
     onDelete: 'SET NULL',
   })
-  @JoinColumn([{ name: 'person_id', referencedColumnName: 'id', }])
+  @JoinColumn([{ name: 'person_id', referencedColumnName: 'id' }])
   person: Person;
 
   @OneToMany(() => Team, (team) => team.account)

@@ -5,16 +5,19 @@ import {
   Body,
   Patch,
   Param,
-  Delete, UseGuards, Query, HttpStatus
-} from "@nestjs/common";
+  Delete,
+  UseGuards,
+  Query,
+  HttpStatus,
+} from '@nestjs/common';
 import { AccountService } from './account.service';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
-import { PersonTypes } from "../person-type/decorators/person-type.decorator";
-import { PersonTypeGuard } from "../shared/guards/person-type.guard";
-import appConfig from "../config/app.config";
-import { ResponseDto } from "../shared/dto/response.dto";
-import { AuthGuard } from "@nestjs/passport";
+import { PersonTypes } from '../person-type/decorators/person-type.decorator';
+import { PersonTypeGuard } from '../shared/guards/person-type.guard';
+import appConfig from '../config/app.config';
+import { ResponseDto } from '../shared/dto/response.dto';
+import { AuthGuard } from '@nestjs/passport';
 
 @UseGuards(AuthGuard())
 @Controller('account')
