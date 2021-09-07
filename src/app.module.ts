@@ -7,6 +7,7 @@ import { EnglishLevel } from './database/entities/english-level.entity';
 import { AuthModule } from './auth/auth.module';
 import { PersonTypeModule } from './person-type/person-type.module';
 import { PersonModule } from './person/person.module';
+import { AccountModule } from './account/account.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { PersonModule } from './person/person.module';
     AuthModule,
     PersonTypeModule,
     PersonModule,
+    AccountModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Person } from './entities/person.entity';
@@ -13,12 +12,23 @@ export class PersonService {
     @InjectRepository(Person)
     private readonly personRepository: Repository<Person>,
   ) {}
-  create(createPersonDto: CreatePersonDto) {
-    return 'This action adds a new person';
-  }
 
-  findAll() {
-    return `This action returns all person`;
+  async findAll(take: number, skip: number): Promise<GetPersonDto[]> {
+    const persons: Person[] = await this.personRepository.find({
+      take,
+      skip,
+    });
+
+    const getPersonsDto: GetPersonDto[] = persons.map(
+      (person) =>
+        new GetPersonDto(
+          person.id,
+          person.email,
+          person.fullName,
+          new GetPersonTypeDto(person.personType.id, person.personType.value),
+        ),
+    );
+    return getPersonsDto;
   }
 
   async findOne(id: string): Promise<GetPersonDto> {

@@ -40,3 +40,8 @@ $ npm run test:cov
 # Migrations generate
 
 - npm run typeorm:migration:generate -- -n updateDatabase
+
+# Create scafolding crud
+
+- nest g resource
+- doc https://docs.nestjs.com/recipes/crud-generator 

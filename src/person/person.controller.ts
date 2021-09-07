@@ -1,35 +1,42 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
   Delete,
   HttpStatus,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PersonService } from './person.service';
-import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { ResponseDto } from '../shared/dto/response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { PersonTypes } from '../person-type/decorators/person-type.decorator';
 import { PersonTypeGuard } from '../shared/guards/person-type.guard';
+import appConfig from '../config/app.config';
 
 @UseGuards(AuthGuard())
 @Controller('person')
 export class PersonController {
   constructor(private readonly personService: PersonService) {}
 
-  @Post()
-  create(@Body() createPersonDto: CreatePersonDto) {
-    return this.personService.create(createPersonDto);
-  }
-
   @Get()
-  findAll() {
-    return this.personService.findAll();
+  @PersonTypes('ADMIN', 'USER', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async findAll(
+    @Query('skip') skip: number = appConfig.skip,
+    @Query('take') take: number = appConfig.take,
+  ) {
+    let responseDto;
+    try {
+      const data = await this.personService.findAll(take, skip);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Get(':id')

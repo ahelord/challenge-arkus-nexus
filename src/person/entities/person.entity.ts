@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Account } from '../../database/entities/account.entity';
+import { Account } from '../../account/entities/account.entity';
 import { Member } from '../../database/entities/member.entity';
 import { EnglishLevel } from '../../database/entities/english-level.entity';
 import { PersonType } from '../../person-type/entities/person-type.entity';
