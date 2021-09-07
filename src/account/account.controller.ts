@@ -32,7 +32,7 @@ export class AccountController {
   async findAll(
     @Query('skip') skip: number = appConfig.skip,
     @Query('take') take: number = appConfig.take,
-  ) {
+  ): Promise<ResponseDto> {
     let responseDto;
     try {
       const data = await this.accountService.findAll(take, skip);

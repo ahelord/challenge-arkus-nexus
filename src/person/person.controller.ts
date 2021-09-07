@@ -28,7 +28,7 @@ export class PersonController {
   async findAll(
     @Query('skip') skip: number = appConfig.skip,
     @Query('take') take: number = appConfig.take,
-  ) {
+  ): Promise<ResponseDto> {
     let responseDto;
     try {
       const data = await this.personService.findAll(take, skip);
