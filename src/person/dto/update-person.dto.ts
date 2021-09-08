@@ -22,5 +22,4 @@ export class UpdatePersonDto {
 
   @IsString()
   englishLevel: GetEnglishLevelDto;
-
 }
