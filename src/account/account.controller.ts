@@ -25,8 +25,17 @@ export class AccountController {
   constructor(private readonly accountService: AccountService) {}
 
   @Post()
-  create(@Body() createAccountDto: CreateAccountDto) {
-    return this.accountService.create(createAccountDto);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async create(@Body() createAccountDto: CreateAccountDto) {
+    let responseDto;
+    try {
+      const data = await this.accountService.create(createAccountDto);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Get()
@@ -47,17 +56,45 @@ export class AccountController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.accountService.findOne(+id);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async findOne(@Param('id') id: string): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.accountService.findOne(id);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAccountDto: UpdateAccountDto) {
-    return this.accountService.update(+id, updateAccountDto);
+  async update(
+    @Param('id') id: string,
+    @Body() updateAccountDto: UpdateAccountDto,
+  ): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.accountService.update(id, updateAccountDto);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.accountService.remove(+id);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async remove(@Param('id') id: string): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.accountService.remove(id);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 }

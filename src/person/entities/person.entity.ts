@@ -43,6 +43,7 @@ export class Person {
   members: Member[];
 
   @ManyToOne(() => EnglishLevel, (englishLevel) => englishLevel.people, {
+    eager:true,
     onDelete: 'SET NULL',
   })
   @JoinColumn([{ name: 'english_level_id', referencedColumnName: 'id' }])

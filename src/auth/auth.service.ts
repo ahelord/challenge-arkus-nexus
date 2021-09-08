@@ -13,6 +13,7 @@ import { compare, genSalt, hash } from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 import { GetPersonDto } from '../person/dto/get-person.dto';
 import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
+import { GetEnglishLevelDto } from '../person/dto/get-english-level.dto';
 
 @Injectable()
 export class AuthService {
@@ -71,6 +72,14 @@ export class AuthService {
         person.personType.id,
         person.personType.value,
       ),
+      resumeUrl: person.resumeUrl,
+      skills: person.skills,
+      englishLevel: person.englishLevel
+        ? new GetEnglishLevelDto(
+            person.englishLevel.id,
+            person.englishLevel.value,
+          )
+        : null,
     };
     const token = await this.jwtService.sign(payload);
     return { token };

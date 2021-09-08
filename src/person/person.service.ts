@@ -5,6 +5,7 @@ import { Person } from './entities/person.entity';
 import { Repository } from 'typeorm';
 import { GetPersonDto } from './dto/get-person.dto';
 import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
+import { GetEnglishLevelDto } from './dto/get-english-level.dto';
 
 @Injectable()
 export class PersonService {
@@ -15,6 +16,15 @@ export class PersonService {
 
   async findAll(take: number, skip: number): Promise<GetPersonDto[]> {
     const persons: Person[] = await this.personRepository.find({
+      select: [
+        'id',
+        'email',
+        'fullName',
+        'personType',
+        'englishLevel',
+        'resumeUrl',
+        'skills',
+      ],
       take,
       skip,
     });
@@ -26,6 +36,14 @@ export class PersonService {
           person.email,
           person.fullName,
           new GetPersonTypeDto(person.personType.id, person.personType.value),
+          person.resumeUrl,
+          person.skills,
+          person.englishLevel
+            ? new GetEnglishLevelDto(
+                person.englishLevel.id,
+                person.englishLevel.value,
+              )
+            : null,
         ),
     );
     return getPersonsDto;
@@ -33,7 +51,15 @@ export class PersonService {
 
   async findOne(id: string): Promise<GetPersonDto> {
     const person: Person = await this.personRepository.findOne({
-      select: ['id', 'email', 'fullName', 'personType'],
+      select: [
+        'id',
+        'email',
+        'fullName',
+        'personType',
+        'englishLevel',
+        'resumeUrl',
+        'skills',
+      ],
       where: { id },
     });
     if (!person) throw new NotFoundException('person not exists');
@@ -43,6 +69,14 @@ export class PersonService {
       person.email,
       person.fullName,
       new GetPersonTypeDto(person.personType.id, person.personType.value),
+      person.resumeUrl,
+      person.skills,
+      person.englishLevel
+        ? new GetEnglishLevelDto(
+            person.englishLevel.id,
+            person.englishLevel.value,
+          )
+        : null,
     );
   }
 
@@ -53,7 +87,15 @@ export class PersonService {
     await this.personRepository.update({ id }, { ...updatePersonDto });
 
     const person: Person = await this.personRepository.findOne({
-      select: ['id', 'email', 'fullName', 'personType'],
+      select: [
+        'id',
+        'email',
+        'fullName',
+        'personType',
+        'englishLevel',
+        'resumeUrl',
+        'skills',
+      ],
       where: { id },
     });
     if (!person) throw new NotFoundException('person not exists');
@@ -63,6 +105,14 @@ export class PersonService {
       person.email,
       person.fullName,
       new GetPersonTypeDto(person.personType.id, person.personType.value),
+      person.resumeUrl,
+      person.skills,
+      person.englishLevel
+        ? new GetEnglishLevelDto(
+            person.englishLevel.id,
+            person.englishLevel.value,
+          )
+        : null,
     );
   }
 

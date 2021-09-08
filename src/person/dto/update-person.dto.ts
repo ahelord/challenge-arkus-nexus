@@ -1,4 +1,5 @@
 import { IsString } from 'class-validator';
+import { GetEnglishLevelDto } from './get-english-level.dto';
 
 export class UpdatePersonDto {
   @IsString()
@@ -13,10 +14,13 @@ export class UpdatePersonDto {
   @IsString()
   fullName: string;
 
-  constructor(id: string, email: string, password: string, fullName: string) {
-    this.id = id;
-    this.email = email;
-    this.password = password;
-    this.fullName = fullName;
-  }
+  @IsString()
+  resumeUrl: string;
+
+  @IsString()
+  skills: string;
+
+  @IsString()
+  englishLevel: GetEnglishLevelDto;
+
 }

@@ -1,26 +1,53 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
-import { UpdateAccountDto } from './dto/update-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
 import { Repository } from 'typeorm';
 import { GetPersonDto } from '../person/dto/get-person.dto';
-import { Person } from '../person/entities/person.entity';
 import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
 import { GetAccountDto } from './dto/get-account.dto';
+import { UpdateAccountDto } from './dto/update-account.dto';
+import { GetEnglishLevelDto } from '../person/dto/get-english-level.dto';
 
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account)
-    private readonly accountService: Repository<Account>,
+    private readonly accountRepository: Repository<Account>,
   ) {}
-  create(createAccountDto: CreateAccountDto) {
-    return 'This action adds a new account';
+  async create(createAccountDto: CreateAccountDto) {
+    const accountCreated = await this.accountRepository.save(createAccountDto);
+    const account: Account = await this.accountRepository.findOne({
+      id: accountCreated.id,
+    });
+    return new GetAccountDto(
+      account.id,
+      account.name,
+      account.client,
+      account.person
+        ? new GetPersonDto(
+            account.person.id,
+            account.person.fullName,
+            account.person.email,
+            new GetPersonTypeDto(
+              account.person.personType.id,
+              account.person.personType.value,
+            ),
+            account.person.resumeUrl,
+            account.person.skills,
+            account.person.englishLevel
+              ? new GetEnglishLevelDto(
+                  account.person.englishLevel.id,
+                  account.person.englishLevel.value,
+                )
+              : null,
+          )
+        : null,
+    );
   }
 
   async findAll(take: number, skip: number): Promise<GetAccountDto[]> {
-    const accounts: Account[] = await this.accountService.find({
+    const accounts: Account[] = await this.accountRepository.find({
       take,
       skip,
     });
@@ -31,29 +58,99 @@ export class AccountService {
           account.id,
           account.name,
           account.client,
-          new GetPersonDto(
-            account.person.id,
-            account.person.email,
-            account.person.fullName,
-            new GetPersonTypeDto(
-              account.person.personType.id,
-              account.person.personType.value,
-            ),
-          ),
+          account.person
+            ? new GetPersonDto(
+                account.person.id,
+                account.person.fullName,
+                account.person.email,
+                new GetPersonTypeDto(
+                  account.person.personType.id,
+                  account.person.personType.value,
+                ),
+                account.person.resumeUrl,
+                account.person.skills,
+                account.person.englishLevel
+                  ? new GetEnglishLevelDto(
+                      account.person.englishLevel.id,
+                      account.person.englishLevel.value,
+                    )
+                  : null,
+              )
+            : null,
         ),
     );
     return getAccountsDto;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} account`;
+  async findOne(id: string) {
+    const account: Account = await this.accountRepository.findOne({
+      select: ['id', 'name', 'client', 'person'],
+      where: { id },
+    });
+    return new GetAccountDto(
+      account.id,
+      account.name,
+      account.client,
+      new GetPersonDto(
+        account.person.id,
+        account.person.email,
+        account.person.fullName,
+        new GetPersonTypeDto(
+          account.person.personType.id,
+          account.person.personType.value,
+        ),
+        account.person.resumeUrl,
+        account.person.skills,
+        account.person.englishLevel
+          ? new GetEnglishLevelDto(
+              account.person.englishLevel.id,
+              account.person.englishLevel.value,
+            )
+          : null,
+      ),
+    );
   }
 
-  update(id: number, updateAccountDto: UpdateAccountDto) {
-    return `This action updates a #${id} account`;
+  async update(
+    id: string,
+    updateAccountDto: UpdateAccountDto,
+  ): Promise<GetAccountDto> {
+    await this.accountRepository.update({ id }, { ...updateAccountDto });
+
+    const account: Account = await this.accountRepository.findOne({
+      select: ['id', 'name', 'client', 'person'],
+      where: { id },
+    });
+    if (!account) throw new NotFoundException('account not exists');
+
+    return new GetAccountDto(
+      account.id,
+      account.name,
+      account.client,
+      new GetPersonDto(
+        account.person.id,
+        account.person.email,
+        account.person.fullName,
+        new GetPersonTypeDto(
+          account.person.personType.id,
+          account.person.personType.value,
+        ),
+        account.person.resumeUrl,
+        account.person.skills,
+        account.person.englishLevel
+          ? new GetEnglishLevelDto(
+              account.person.englishLevel.id,
+              account.person.englishLevel.value,
+            )
+          : null,
+      ),
+    );
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} account`;
+  async remove(id: string): Promise<{ isDeleted: boolean }> {
+    const deleteResult = await this.accountRepository.delete({ id });
+    return deleteResult.affected > 0
+      ? { isDeleted: true }
+      : { isDeleted: false };
   }
 }
