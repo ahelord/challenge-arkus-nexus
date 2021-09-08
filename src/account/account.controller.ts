@@ -70,6 +70,8 @@ export class AccountController {
   }
 
   @Patch(':id')
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
   async update(
     @Param('id') id: string,
     @Body() updateAccountDto: UpdateAccountDto,
