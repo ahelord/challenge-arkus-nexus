@@ -7,7 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { Person } from '../../person/entities/person.entity';
-import { Team } from '../../database/entities/team.entity';
+import { Team } from '../../team/entities/team.entity';
 
 @Index('account_pk', ['id'], { unique: true })
 @Entity('account', { schema: 'public' })

@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 import { GetPersonDto } from './dto/get-person.dto';
 import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
 import { GetEnglishLevelDto } from './dto/get-english-level.dto';
+import { UpdateSkillsDto } from './dto/update-skills.dto';
 
 @Injectable()
 export class PersonService {
@@ -85,6 +86,42 @@ export class PersonService {
     updatePersonDto: UpdatePersonDto,
   ): Promise<GetPersonDto> {
     await this.personRepository.update({ id }, { ...updatePersonDto });
+
+    const person: Person = await this.personRepository.findOne({
+      select: [
+        'id',
+        'email',
+        'fullName',
+        'personType',
+        'englishLevel',
+        'resumeUrl',
+        'skills',
+      ],
+      where: { id },
+    });
+    if (!person) throw new NotFoundException('person not exists');
+
+    return new GetPersonDto(
+      person.id,
+      person.email,
+      person.fullName,
+      new GetPersonTypeDto(person.personType.id, person.personType.value),
+      person.resumeUrl,
+      person.skills,
+      person.englishLevel
+        ? new GetEnglishLevelDto(
+            person.englishLevel.id,
+            person.englishLevel.value,
+          )
+        : null,
+    );
+  }
+
+  async updateSkills(
+    id: string,
+    updateSkillsDto: UpdateSkillsDto,
+  ): Promise<GetPersonDto> {
+    await this.personRepository.update({ id }, { ...updateSkillsDto });
 
     const person: Person = await this.personRepository.findOne({
       select: [

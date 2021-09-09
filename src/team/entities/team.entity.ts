@@ -6,7 +6,7 @@ import {
   ManyToOne,
   OneToMany,
 } from 'typeorm';
-import { Member } from './member.entity';
+import { Member } from '../../database/entities/member.entity';
 import { Account } from '../../account/entities/account.entity';
 
 @Index('team_pk', ['id'], { unique: true })
@@ -26,6 +26,7 @@ export class Team {
   members: Member[];
 
   @ManyToOne(() => Account, (account) => account.teams, {
+    eager: true,
     onDelete: 'SET NULL',
   })
   @JoinColumn([{ name: 'account_id', referencedColumnName: 'id' }])

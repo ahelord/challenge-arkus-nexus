@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { PersonTypeModule } from './person-type/person-type.module';
 import { PersonModule } from './person/person.module';
 import { AccountModule } from './account/account.module';
+import { TeamModule } from './team/team.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AccountModule } from './account/account.module';
     PersonTypeModule,
     PersonModule,
     AccountModule,
+    TeamModule,
   ],
   controllers: [AppController],
   providers: [AppService],
