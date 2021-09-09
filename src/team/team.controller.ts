@@ -18,6 +18,7 @@ import { PersonTypes } from '../person-type/decorators/person-type.decorator';
 import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import { ResponseDto } from '../shared/dto/response.dto';
 import appConfig from '../config/app.config';
+import { UpdatePersonDto } from "../person/dto/update-person.dto";
 
 @UseGuards(AuthGuard())
 @Controller('team')
@@ -61,12 +62,33 @@ export class TeamController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTeamDto: UpdateTeamDto) {
-    return this.teamService.update(+id, updateTeamDto);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async update(
+    @Param('id') id: string,
+    @Body() updateTeamDto: UpdateTeamDto,
+  ): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.teamService.update(id, updateTeamDto);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.teamService.remove(+id);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async remove(@Param('id') id: string): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.teamService.remove(id);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 }

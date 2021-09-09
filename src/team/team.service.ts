@@ -5,6 +5,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './entities/team.entity';
 import { Repository } from 'typeorm';
 import { GetTeamDto } from './dto/get-team.dto';
+import { UpdatePersonDto } from "../person/dto/update-person.dto";
+import { GetPersonDto } from "../person/dto/get-person.dto";
+import { Person } from "../person/entities/person.entity";
 
 @Injectable()
 export class TeamService {
@@ -38,11 +41,21 @@ export class TeamService {
     return new GetTeamDto(team.id, team.name, team.account.id);
   }
 
-  update(id: number, updateTeamDto: UpdateTeamDto) {
-    return `This action updates a #${id} team`;
+  async update(id: string, updateTeamDto: UpdateTeamDto): Promise<GetTeamDto> {
+    await this.teamRepository.update({ id }, { ...updateTeamDto });
+
+    const team: Team = await this.teamRepository.findOne({
+      select: ['id', 'name', 'account'],
+      where: { id },
+    });
+    if (!team) throw new NotFoundException('person not exists');
+    return new GetTeamDto(team.id, team.name, team.account.id);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} team`;
+  async remove(id: string): Promise<{ isDeleted: boolean }> {
+    const deleteResult = await this.teamRepository.delete({ id });
+    return deleteResult.affected > 0
+      ? { isDeleted: true }
+      : { isDeleted: false };
   }
 }
