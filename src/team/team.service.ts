@@ -5,9 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './entities/team.entity';
 import { Repository } from 'typeorm';
 import { GetTeamDto } from './dto/get-team.dto';
-import { UpdatePersonDto } from "../person/dto/update-person.dto";
-import { GetPersonDto } from "../person/dto/get-person.dto";
-import { Person } from "../person/entities/person.entity";
 
 @Injectable()
 export class TeamService {

@@ -18,7 +18,6 @@ import { PersonTypes } from '../person-type/decorators/person-type.decorator';
 import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import { ResponseDto } from '../shared/dto/response.dto';
 import appConfig from '../config/app.config';
-import { UpdatePersonDto } from "../person/dto/update-person.dto";
 
 @UseGuards(AuthGuard())
 @Controller('team')

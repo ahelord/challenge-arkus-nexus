@@ -1,11 +1,9 @@
-import { IsString } from "class-validator";
+import { IsString } from 'class-validator';
 
 export class UpdateTeamDto {
   @IsString()
-  name:string;
+  name: string;
 
-@IsString()
-  accountId:string;
-
-
+  @IsString()
+  accountId: string;
 }
