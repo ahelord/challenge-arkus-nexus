@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './entities/team.entity';
 import { Repository } from 'typeorm';
 import { GetTeamDto } from './dto/get-team.dto';
+import { CreateAccountDto } from '../account/dto/create-account.dto';
+import { Account } from '../account/entities/account.entity';
 
 @Injectable()
 export class TeamService {
@@ -12,8 +14,16 @@ export class TeamService {
     @InjectRepository(Team)
     private readonly teamRepository: Repository<Team>,
   ) {}
-  create(createTeamDto: CreateTeamDto) {
-    return 'This action adds a new team';
+  async create(createTeamDto: CreateTeamDto) {
+    const teamCreated = await this.teamRepository.save(createTeamDto);
+    const team: Team = await this.teamRepository.findOne({
+      id: teamCreated.id,
+    });
+    return new GetTeamDto(
+      team.id,
+      team.name,
+      team.account ? team.account.id : null,
+    );
   }
 
   async findAll(take: number, skip: number): Promise<GetTeamDto[]> {
@@ -23,7 +33,12 @@ export class TeamService {
       skip,
     });
     const getTeamsDto: GetTeamDto[] = teams.map(
-      (team) => new GetTeamDto(team.id, team.name, team.account.id),
+      (team) =>
+        new GetTeamDto(
+          team.id,
+          team.name,
+          team.account ? team.account.id : null,
+        ),
     );
     return getTeamsDto;
   }
@@ -35,7 +50,11 @@ export class TeamService {
     });
     if (!team) throw new NotFoundException('team not exists');
 
-    return new GetTeamDto(team.id, team.name, team.account.id);
+    return new GetTeamDto(
+      team.id,
+      team.name,
+      team.account ? team.account.id : null,
+    );
   }
 
   async update(id: string, updateTeamDto: UpdateTeamDto): Promise<GetTeamDto> {
@@ -46,7 +65,11 @@ export class TeamService {
       where: { id },
     });
     if (!team) throw new NotFoundException('person not exists');
-    return new GetTeamDto(team.id, team.name, team.account.id);
+    return new GetTeamDto(
+      team.id,
+      team.name,
+      team.account ? team.account.id : null,
+    );
   }
 
   async remove(id: string): Promise<{ isDeleted: boolean }> {

@@ -18,6 +18,7 @@ import { PersonTypes } from '../person-type/decorators/person-type.decorator';
 import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import { ResponseDto } from '../shared/dto/response.dto';
 import appConfig from '../config/app.config';
+import { CreateAccountDto } from '../account/dto/create-account.dto';
 
 @UseGuards(AuthGuard())
 @Controller('team')
@@ -25,8 +26,17 @@ export class TeamController {
   constructor(private readonly teamService: TeamService) {}
 
   @Post()
-  create(@Body() createTeamDto: CreateTeamDto) {
-    return this.teamService.create(createTeamDto);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async create(@Body() createTeamDto: CreateTeamDto) {
+    let responseDto;
+    try {
+      const data = await this.teamService.create(createTeamDto);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Get()
