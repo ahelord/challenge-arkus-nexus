@@ -23,15 +23,14 @@ export class Member {
 
   @ManyToOne(() => Person, (person) => person.members, {
     onDelete: 'CASCADE',
-    eager:true
+    eager: true,
   })
   @JoinColumn([{ name: 'person_id', referencedColumnName: 'id' }])
   person: Person;
 
   @ManyToOne(() => Team, (team) => team.members, {
     onDelete: 'CASCADE',
-    eager:true
-
+    eager: true,
   })
   @JoinColumn([{ name: 'team_id', referencedColumnName: 'id' }])
   team: Team;
