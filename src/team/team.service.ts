@@ -5,8 +5,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Team } from './entities/team.entity';
 import { Repository } from 'typeorm';
 import { GetTeamDto } from './dto/get-team.dto';
-import { CreateAccountDto } from '../account/dto/create-account.dto';
-import { Account } from '../account/entities/account.entity';
 
 @Injectable()
 export class TeamService {
@@ -15,7 +13,7 @@ export class TeamService {
     private readonly teamRepository: Repository<Team>,
   ) {}
   async create(createTeamDto: CreateTeamDto) {
-    const teamCreated = await this.teamRepository.save(createTeamDto);
+    const teamCreated: Team = await this.teamRepository.save(createTeamDto);
     const team: Team = await this.teamRepository.findOne({
       id: teamCreated.id,
     });

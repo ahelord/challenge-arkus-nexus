@@ -15,14 +15,24 @@ export class Member {
   @Column('timestamp without time zone', { name: 'start_date' })
   startDate: Date;
 
-  @Column('timestamp without time zone', { name: 'end_date' })
+  @Column('timestamp without time zone', {
+    name: 'end_date',
+    nullable: true,
+  })
   endDate: Date;
 
-  @ManyToOne(() => Person, (person) => person.members, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Person, (person) => person.members, {
+    onDelete: 'CASCADE',
+    eager:true
+  })
   @JoinColumn([{ name: 'person_id', referencedColumnName: 'id' }])
   person: Person;
 
-  @ManyToOne(() => Team, (team) => team.members, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Team, (team) => team.members, {
+    onDelete: 'CASCADE',
+    eager:true
+
+  })
   @JoinColumn([{ name: 'team_id', referencedColumnName: 'id' }])
   team: Team;
 }

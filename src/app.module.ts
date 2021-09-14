@@ -9,6 +9,7 @@ import { PersonTypeModule } from './person-type/person-type.module';
 import { PersonModule } from './person/person.module';
 import { AccountModule } from './account/account.module';
 import { TeamModule } from './team/team.module';
+import { MemberModule } from './member/member.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { TeamModule } from './team/team.module';
     PersonModule,
     AccountModule,
     TeamModule,
+    MemberModule,
   ],
   controllers: [AppController],
   providers: [AppService],
