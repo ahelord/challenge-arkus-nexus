@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   UnauthorizedException,
+  Inject,
 } from '@nestjs/common';
 import { LoginDto, CreateSignUpDto } from './dto';
 import { Person } from '../person/entities/person.entity';
@@ -14,7 +15,8 @@ import { JwtService } from '@nestjs/jwt';
 import { GetPersonDto } from '../person/dto/get-person.dto';
 import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
 import { GetEnglishLevelDto } from '../person/dto/get-english-level.dto';
-
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 @Injectable()
 export class AuthService {
   constructor(
@@ -23,6 +25,7 @@ export class AuthService {
     @InjectRepository(Person)
     private readonly personRepository: Repository<Person>,
     private readonly jwtService: JwtService,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async signUp(
@@ -59,9 +62,21 @@ export class AuthService {
       where: { email },
     });
     console.log(person);
-    if (!person) throw new NotFoundException('email not exists');
+    if (!person) {
+      this.logger.log({
+        level: 'info',
+        message: 'email not exists',
+        params: { loginDto },
+      });
+      throw new NotFoundException('email not exists');
+    }
     const isSamePassword = await compare(password, person.passwordEncrypted);
     if (!isSamePassword) {
+      this.logger.log({
+        level: 'error',
+        message: 'invalidad credentials',
+        params: { loginDto },
+      });
       throw new UnauthorizedException('invalidad credentials');
     }
     const payload: GetPersonDto = {

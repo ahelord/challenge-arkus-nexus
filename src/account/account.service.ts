@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateAccountDto } from './dto/create-account.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Account } from './entities/account.entity';
@@ -9,11 +9,15 @@ import { GetAccountDto } from './dto/get-account.dto';
 import { UpdateAccountDto } from './dto/update-account.dto';
 import { GetEnglishLevelDto } from '../person/dto/get-english-level.dto';
 
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
+
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
   async create(createAccountDto: CreateAccountDto) {
     const accountCreated = await this.accountRepository.save(createAccountDto);
@@ -121,7 +125,14 @@ export class AccountService {
       select: ['id', 'name', 'client', 'person'],
       where: { id },
     });
-    if (!account) throw new NotFoundException('account not exists');
+    if (!account) {
+      this.logger.log({
+        level: 'info',
+        message: 'account not exists',
+        params: { id, updateAccountDto },
+      });
+      throw new NotFoundException('account not exists');
+    }
 
     return new GetAccountDto(
       account.id,

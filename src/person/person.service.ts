@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { UpdatePersonDto } from './dto/update-person.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Person } from './entities/person.entity';
@@ -7,12 +7,14 @@ import { GetPersonDto } from './dto/get-person.dto';
 import { GetPersonTypeDto } from '../person-type/dto/get-person-type.dto';
 import { GetEnglishLevelDto } from './dto/get-english-level.dto';
 import { UpdateSkillsDto } from './dto/update-skills.dto';
-
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
 @Injectable()
 export class PersonService {
   constructor(
     @InjectRepository(Person)
     private readonly personRepository: Repository<Person>,
+    @Inject(WINSTON_MODULE_PROVIDER) private readonly logger: Logger,
   ) {}
 
   async findAll(take: number, skip: number): Promise<GetPersonDto[]> {
@@ -63,7 +65,14 @@ export class PersonService {
       ],
       where: { id },
     });
-    if (!person) throw new NotFoundException('person not exists');
+    if (!person) {
+      this.logger.log({
+        level: 'info',
+        message: 'person not exists',
+        params: { id },
+      });
+      throw new NotFoundException('person not exists');
+    }
 
     return new GetPersonDto(
       person.id,
@@ -99,7 +108,14 @@ export class PersonService {
       ],
       where: { id },
     });
-    if (!person) throw new NotFoundException('person not exists');
+    if (!person) {
+      this.logger.log({
+        level: 'info',
+        message: 'person not exists',
+        params: { id, updatePersonDto },
+      });
+      throw new NotFoundException('person not exists');
+    }
 
     return new GetPersonDto(
       person.id,
@@ -135,7 +151,14 @@ export class PersonService {
       ],
       where: { id },
     });
-    if (!person) throw new NotFoundException('person not exists');
+    if (!person) {
+      this.logger.log({
+        level: 'info',
+        message: 'person not exists',
+        params: { id, updateSkillsDto },
+      });
+      throw new NotFoundException('person not exists');
+    }
 
     return new GetPersonDto(
       person.id,

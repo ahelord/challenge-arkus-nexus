@@ -18,7 +18,6 @@ import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import { ResponseDto } from '../shared/dto/response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import appConfig from '../config/app.config';
-import { CreateTeamDto } from '../team/dto/create-team.dto';
 
 @UseGuards(AuthGuard())
 @Controller('member')
@@ -71,8 +70,20 @@ export class MemberController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMemberDto: UpdateMemberDto) {
-    return this.memberService.update(+id, updateMemberDto);
+  @PersonTypes('ADMIN', 'SUPER_ADMIN')
+  @UseGuards(PersonTypeGuard)
+  async update(
+    @Param('id') id: string,
+    @Body() updateMemberDto: UpdateMemberDto,
+  ): Promise<ResponseDto> {
+    let responseDto;
+    try {
+      const data = await this.memberService.update(id, updateMemberDto);
+      responseDto = new ResponseDto(data, HttpStatus.OK);
+    } catch (error) {
+      responseDto = new ResponseDto({}, HttpStatus.BAD_REQUEST, error.message);
+    }
+    return responseDto;
   }
 
   @Delete(':id')
