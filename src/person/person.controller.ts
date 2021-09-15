@@ -17,8 +17,11 @@ import { PersonTypes } from '../person-type/decorators/person-type.decorator';
 import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import appConfig from '../config/app.config';
 import { UpdateSkillsDto } from './dto/update-skills.dto';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard())
+@ApiSecurity('bearer')
+@ApiTags('person')
 @Controller('person')
 export class PersonController {
   constructor(private readonly personService: PersonService) {}

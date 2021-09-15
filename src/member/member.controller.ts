@@ -18,8 +18,11 @@ import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import { ResponseDto } from '../shared/dto/response.dto';
 import { AuthGuard } from '@nestjs/passport';
 import appConfig from '../config/app.config';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard())
+@ApiSecurity('bearer')
+@ApiTags('member')
 @Controller('member')
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}

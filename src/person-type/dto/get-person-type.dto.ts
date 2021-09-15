@@ -1,9 +1,12 @@
 import { IsString } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class GetPersonTypeDto {
+  @ApiProperty()
   @IsString()
   id: string;
 
+  @ApiProperty()
   @IsString()
   value: string;
 

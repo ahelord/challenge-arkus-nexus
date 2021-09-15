@@ -61,7 +61,6 @@ export class AuthService {
     const person: Person = await this.personRepository.findOne({
       where: { email },
     });
-    console.log(person);
     if (!person) {
       this.logger.log({
         level: 'info',

@@ -18,8 +18,11 @@ import { PersonTypes } from '../person-type/decorators/person-type.decorator';
 import { PersonTypeGuard } from '../shared/guards/person-type.guard';
 import { ResponseDto } from '../shared/dto/response.dto';
 import appConfig from '../config/app.config';
+import { ApiSecurity, ApiTags } from '@nestjs/swagger';
 
 @UseGuards(AuthGuard())
+@ApiTags('team')
+@ApiSecurity('bearer')
 @Controller('team')
 export class TeamController {
   constructor(private readonly teamService: TeamService) {}
